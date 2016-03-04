@@ -1,0 +1,101 @@
+Imports System.Net
+Imports System.Net.Sockets
+Imports System.Text
+
+Public Class Form1
+    Public input As String
+    Private stringData As String
+    Dim data(1024) As Byte
+    Dim clientip As String
+    Dim ipep As IPEndPoint
+    Dim server As Socket = New Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
+    Dim recv As Integer
+
+
+    Public Function getIp() As String
+        Dim host As IPHostEntry
+        host = Dns.GetHostEntry(Dns.GetHostName())
+        For Each ip As IPAddress In host.AddressList
+            If ip.AddressFamily = AddressFamily.InterNetwork Then
+                Return ip.ToString()
+            End If
+        Next
+        Return "127.0.0.1"
+    End Function
+    Private Sub ListBox1_SelectedIndexChanged(sender As Object, e As EventArgs)
+
+    End Sub
+
+    Private Sub Cerrar11_Click(sender As Object, e As EventArgs) Handles Cerrar11.Click
+        'server.Shutdown(SocketShutdown.Both)
+        'server.Close()
+        Application.Exit()
+    End Sub
+
+    Private Sub Enviar1_Click(sender As Object, e As EventArgs) Handles Enviar1.Click
+        OpenFileDialog1.Filter = "Text File (*.txt)| * .txt; | PDF File (*.pdf)| * .pdf;| Word File (*.doc,*.docx)| *.doc;*.docx;  "
+        If OpenFileDialog1.ShowDialog = DialogResult.OK Then
+            msg.Text = OpenFileDialog1.FileName
+        End If
+    End Sub
+
+    Private Sub conectar()
+
+        Try
+            'Conexión a un host remoto (servidor)
+            server.Connect(ipep)
+        Catch e As SocketException
+            MsgBox("Imposible conectar con el servidor" & e.ToString(), MsgBoxStyle.OkOnly, "Error")
+            Me.Close()
+        End Try
+
+
+
+    End Sub
+
+    Private Sub PictureBox1_Click(sender As Object, e As EventArgs) Handles PictureBox1.Click
+
+    End Sub
+
+
+    Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        clientip = getIp()
+        '  ipep = New IPEndPoint(IPAddress.Parse("192.168.0.1"), 1900)
+        ipep = New IPEndPoint(IPAddress.Parse("127.0.0.1"), 1900)
+
+
+    End Sub
+
+    Private Sub Send_Click(sender As Object, e As EventArgs) Handles send.Click
+
+        message.Text = msg.Text
+        input = message.Text
+        msg.Clear()
+        server.Send(Encoding.ASCII.GetBytes(input))
+        data(1024) = New Byte
+        ' If recv = server.Receive(data) Then
+        ' stringData = Encoding.ASCII.GetString(data, 0, recv)
+        ' Console.WriteLine(stringData)
+        ' End If
+
+    End Sub
+
+    Private Sub RecivirMensajes()
+        server.BeginReceive()
+
+        recv = server.Receive(data)
+        stringData = Encoding.ASCII.GetString(data, 0, recv)
+        Console.WriteLine(stringData)
+
+
+    End Sub
+
+    Private Sub msg_TextChanged(sender As Object, e As EventArgs) Handles msg.TextChanged
+
+    End Sub
+
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+        conectar()
+    End Sub
+
+End Class
