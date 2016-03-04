@@ -12,7 +12,7 @@ Public Class Form1
     Dim server As Socket = New Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
     Dim client As Socket = New Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
     Dim recv As Integer
-
+    Dim numero As Integer
 
     Public Function getIp() As String
         Dim host As IPHostEntry
@@ -74,12 +74,19 @@ Public Class Form1
     End Sub
 
     Private Sub Send_Click(sender As Object, e As EventArgs) Handles send.Click
-
-        message.Text = msg.Text
+        Dim label As Label
+        label = new Label
+        label.name = "label" + numero
+        label.position = new Point (40*numero,60)
+        label.ZOrder 0
+        label.text = msg.Text
+        Me.control.Add(label)
+        
         input = message.Text
         msg.Clear()
         server.Send(Encoding.ASCII.GetBytes(input))
         data(1024) = New Byte
+        numero +=1
        
     End Sub
 
