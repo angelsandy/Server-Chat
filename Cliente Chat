@@ -1,3 +1,4 @@
+Imports System
 Imports System.Net
 Imports System.Net.Sockets
 Imports System.Text
@@ -9,6 +10,7 @@ Public Class Form1
     Dim clientip As String
     Dim ipep As IPEndPoint
     Dim server As Socket = New Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
+    Dim client As Socket = New Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
     Dim recv As Integer
 
 
@@ -54,14 +56,19 @@ Public Class Form1
     End Sub
 
     Private Sub PictureBox1_Click(sender As Object, e As EventArgs) Handles PictureBox1.Click
-
+        recv = server.Receive(data)
+        If recv <> 0 Then
+            stringData = Encoding.ASCII.GetString(data, 0, recv)
+            message.Text = stringData
+        End If
     End Sub
+
 
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         clientip = getIp()
-        '  ipep = New IPEndPoint(IPAddress.Parse("192.168.0.1"), 1900)
-        ipep = New IPEndPoint(IPAddress.Parse("127.0.0.1"), 1900)
+        ipep = New IPEndPoint(IPAddress.Parse("192.168.1.108"), 1900)
+        'ipep = New IPEndPoint(IPAddress.Parse("127.0.0.1"), 1900)
 
 
     End Sub
@@ -73,21 +80,7 @@ Public Class Form1
         msg.Clear()
         server.Send(Encoding.ASCII.GetBytes(input))
         data(1024) = New Byte
-        ' If recv = server.Receive(data) Then
-        ' stringData = Encoding.ASCII.GetString(data, 0, recv)
-        ' Console.WriteLine(stringData)
-        ' End If
-
-    End Sub
-
-    Private Sub RecivirMensajes()
-        server.BeginReceive()
-
-        recv = server.Receive(data)
-        stringData = Encoding.ASCII.GetString(data, 0, recv)
-        Console.WriteLine(stringData)
-
-
+       
     End Sub
 
     Private Sub msg_TextChanged(sender As Object, e As EventArgs) Handles msg.TextChanged
